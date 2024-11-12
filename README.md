@@ -1,4 +1,4 @@
-# 
+# Buggy Territory 
 
 ## Screeshot
 
@@ -26,3 +26,9 @@
 * # - Marco Simone      - verde
 * # - Sette Ville       - viola
 * # - Sette Ville Nord  - arancione
+
+## Layout
+
+alto al centro - nome congregazione
+sinistra come sottotitolo - **ZONA** nome zona
+destra come sottotitolo - **N** numero territorio
