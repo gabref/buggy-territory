@@ -36,6 +36,7 @@ jobs:
           mkdir -p artifacts
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
             zip artifacts/buggy-windows.zip target/${{ matrix.target }}/release/buggy.exe
+            mv target/${{ matrix.target }}/release/buggy.exe artifacts/buggy.exe
           else
             tar -czf artifacts/buggy-linux.tar.gz -C target/${{ matrix.target }}/release buggy
           fi
@@ -55,8 +56,8 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.target }}
-          path: .
+          # name: ${{ matrix.target }}
+          path: artifacts
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
