@@ -35,8 +35,7 @@ jobs:
         run: |
           mkdir -p artifacts
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            zip artifacts/buggy-windows.zip target/${{ matrix.target }}/release/buggy.exe
-            mv target/${{ matrix.target }}/release/buggy.exe artifacts/buggy.exe
+            zip artifacts/territory-app-windows.zip target/${{ matrix.target }}/release/buggy.exe
           else
             tar -czf artifacts/buggy-linux.tar.gz -C target/${{ matrix.target }}/release buggy
           fi
@@ -71,4 +70,4 @@ jobs:
             - Windows binary: buggy-windows.zip
           artifacts: |
             artifacts/x86_64-unknown-linux-gnu/buggy-linux.tar.gz
-            artifacts/x86_64-pc-windows-gnu/buggy-windows.zip
+            artifacts/x86_64-pc-windows-gnu/territory-app-windows.zip
