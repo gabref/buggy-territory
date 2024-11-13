@@ -63,7 +63,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allow_updates: true
-          artifacts: artifacts/*
+          artifacts: artifacts/${{ matrix.target }}/*
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
