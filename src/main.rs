@@ -5,7 +5,7 @@ mod text_processing;
 
 use configuration::{AppConfig, ConfigField};
 use crossterm::{
-    event::{self, Event, KeyCode},
+    event::{self, Event, KeyCode, KeyEventKind},
     style::{Color, Stylize},
     terminal::{disable_raw_mode, enable_raw_mode},
 };
@@ -37,6 +37,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         display_menu(&menu_options, selected_option);
 
         if let Event::Key(key_event) = event::read().unwrap() {
+            if key_event.kind != KeyEventKind::Press {
+                continue;
+            }
             match key_event.code {
                 KeyCode::Up => {
                     if selected_option > 0 {
@@ -195,6 +198,9 @@ fn edit_config(config: &mut AppConfig) {
 
         // Handle key events
         if let Event::Key(key) = event::read().expect("Failed to read event") {
+            if key.kind != KeyEventKind::Press {
+                continue;
+            }
             match key.code {
                 KeyCode::Up => {
                     if selected_option > 0 {
@@ -254,6 +260,9 @@ fn pause_after_action(message: &str) {
     println!("\r{}", message.with(Color::Yellow));
     loop {
         if let Event::Key(key) = event::read().expect("Failed to read key") {
+            if key.kind != KeyEventKind::Press {
+                continue;
+            }
             if key.code == KeyCode::Enter
                 || key.code == KeyCode::Esc
                 || key.code == KeyCode::Char('q')
