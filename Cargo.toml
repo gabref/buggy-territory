@@ -6,8 +6,10 @@ edition = "2021"
 [dependencies]
 ab_glyph = "0.2.29"
 config = "0.14.1"
+crossterm = "0.28.1"
 image = "0.25.5"
 imageproc = "0.25.0"
+ratatui = "0.29.0"
 regex = "1.11.1"
 rusttype = "0.9.3"
 serde = { version = "1.0.215", features = ["derive"] }
