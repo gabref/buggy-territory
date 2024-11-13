@@ -1,0 +1,70 @@
+# .github/workflows/release.yml
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers only on version tags like v1.0.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [x86_64-unknown-linux-gnu, x86_64-pc-windows-gnu] # Linux and Windows targets
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          profile: minimal
+
+      - name: Install Dependencies
+        run: sudo apt-get install -y mingw-w64
+
+      - name: Build the project
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Archive the executable
+        run: |
+          mkdir -p artifacts
+          if [[ "${{ matrix.target }}" == *"windows"* ]]; then
+            zip artifacts/buggy-windows.zip target/${{ matrix.target }}/release/buggy.exe
+          else
+            tar -czf artifacts/buggy-linux.tar.gz -C target/${{ matrix.target }}/release buggy
+          fi
+
+      - name: Upload Artifact to Release
+        id: upload-artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target }}
+          path: artifacts/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.target }}
+          path: .
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          allow_updates: true
+          artifacts: artifacts/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: |
+            This release includes:
+            - Linux binary: buggy-linux.tar.gz
+            - Windows binary: buggy-windows.zip
+

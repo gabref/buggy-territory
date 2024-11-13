@@ -1,4 +1,4 @@
-output_directory = "lay"
+output_directory = "layouts"
 
 [font]
 path_regular = "fonts/Roboto-Regular.ttf"
@@ -10,7 +10,7 @@ size_subtitle = 20.0
 width = 1000
 height = 707
 margin = 50
-title_margin = 30
+title_margin = 40
 text_title = "Piantina di territorio"
 text_subtitle_left = "Congregazione **Roma** Pratolungo"
 text_subtitle_right = "**ZONA** <zone_name> **N.** <territory_number>"

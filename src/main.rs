@@ -133,9 +133,16 @@ fn get_user_input() -> String {
 
 // Display current configurations
 fn display_config(config: &AppConfig) {
-    println!("\n\rCurrent Configurations:");
-    println!("\r{}", format!("{:#?}", config).with(Color::Green));
-}
+    println!("\n\rCurrent Configurations:\n");
+    
+    // Format the config struct as a pretty-printed string
+    let formatted_config = format!("{:#?}", config);
+    
+    // Process each line to prepend '\r' and apply color formatting
+    for line in formatted_config.lines() {
+        println!("\r  {}", line.with(Color::Green));
+
+    }}
 
 fn edit_config(config: &mut AppConfig) {
     // Mapping field display labels to ConfigField variants for dynamic editing
