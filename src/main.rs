@@ -52,10 +52,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     0 => {
                         clear_terminal();
                         display_header();
-                        println!("{}", "Processing images...\n".with(Color::Yellow));
+                        println!("\r{}", "Processing images...\n".with(Color::Yellow));
                         process_images(&config);
                         pause_after_action(
-                            "Images processed.\n\nPress Enter to return to the menu...",
+                            "Images processed.\n\rPress Enter to return to the menu...",
                         );
                     }
                     1 => {
@@ -164,7 +164,9 @@ fn edit_config(config: &mut AppConfig) {
     loop {
         clear_terminal();
         display_edit_config_header();
-        println!("\r    Edit Configurations (Use ↑ ↓ to navigate, Enter to edit, Esc to go back)\n");
+        println!(
+            "\r    Edit Configurations (Use ↑ ↓ to navigate, Enter to edit, Esc to go back)\n"
+        );
 
         // Display each configuration option with current values
         for (index, (label, field)) in config_fields.iter().enumerate() {
@@ -177,7 +179,10 @@ fn edit_config(config: &mut AppConfig) {
                         .with(Color::Black)
                 );
             } else {
-                println!("\r\t{}", format!("  {}: {}", label, value).with(Color::White));
+                println!(
+                    "\r\t{}",
+                    format!("  {}: {}", label, value).with(Color::White)
+                );
             }
         }
 
@@ -242,7 +247,10 @@ fn pause_after_action(message: &str) {
     println!("\r{}", message.with(Color::Yellow));
     loop {
         if let Event::Key(key) = event::read().expect("Failed to read key") {
-            if key.code == KeyCode::Enter {
+            if key.code == KeyCode::Enter
+                || key.code == KeyCode::Esc
+                || key.code == KeyCode::Char('q')
+            {
                 break;
             }
         }
