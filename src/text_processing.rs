@@ -27,7 +27,7 @@ pub fn process_text(
     x: u32,
     y: u32,
     alignment: Alignment,
-) {
+) -> Result<(), Box<dyn std::error::Error>> {
     let mut processed_text = text.to_string();
     let (original_width, _) = text_size(scale, font_regular, text);
 
@@ -68,8 +68,8 @@ pub fn process_text(
             draw_text_mut(
                 layout,
                 Rgb([0u8, 0u8, 0u8]),
-                cursor_x.try_into().expect("Error converting x to u32"),
-                y.try_into().expect("Error converting y to u32"),
+                cursor_x.try_into().map_err(|_| "Failed to convert x to u32")?,
+                y.try_into().map_err(|_| "Failed to convert y to u32")?,
                 scale,
                 font,
                 &current_segment,
@@ -91,11 +91,12 @@ pub fn process_text(
         draw_text_mut(
             layout,
             Rgb([0u8, 0u8, 0u8]),
-            cursor_x.try_into().expect("Error converting x to u32"),
-            y.try_into().expect("Error converting y to u32"),
+            cursor_x.try_into().map_err(|_| "Failed to convert x to u32")?,
+            y.try_into().map_err(|_| "Failed to convert y to u32")?,
             scale,
             font,
             &current_segment,
         );
-    }
+    };
+    Ok(())
 }

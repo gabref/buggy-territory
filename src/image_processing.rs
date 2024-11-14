@@ -1,23 +1,28 @@
-use crate::configuration::{AppConfig, MapCrop, Alignment};
+use crate::configuration::{Alignment, AppConfig, MapCrop};
 use crate::text_processing::process_text;
 use ab_glyph::{FontRef, PxScale};
 use image::{ImageBuffer, Rgb, RgbImage};
 use imageproc::drawing::text_size;
 use std::fs;
 
-fn load_font_data(path: &str) -> Vec<u8> {
-    fs::read(path).expect("Error reading font file")
+fn load_font_data(path: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    fs::read(path).map_err(|e| format!("Failed to read font file {} - {}", path, e).into())
 }
 
-fn create_font_ref<'a>(font_data: &'a [u8]) -> FontRef<'a> {
-    FontRef::try_from_slice(font_data).expect("Error constructing FontRef")
+fn create_font_ref<'a>(font_data: &'a [u8]) -> Result<FontRef<'a>, Box<dyn std::error::Error>> {
+    FontRef::try_from_slice(font_data)
+        .map_err(|e| format!("Failed to create font reference - {}", e).into())
 }
 
-pub fn create_layout(config: &AppConfig, name: &str, number: &str) -> RgbImage {
-    let font_data = load_font_data(&config.font.path_regular);
-    let font_regular = create_font_ref(&font_data);
-    let font_data = load_font_data(&config.font.path_bold);
-    let font_bold = create_font_ref(&font_data);
+pub fn create_layout(
+    config: &AppConfig,
+    name: &str,
+    number: &str,
+) -> Result<RgbImage, Box<dyn std::error::Error>> {
+    let font_data = load_font_data(&config.font.path_regular)?;
+    let font_regular = create_font_ref(&font_data)?;
+    let font_data = load_font_data(&config.font.path_bold)?;
+    let font_bold = create_font_ref(&font_data)?;
 
     let title_scale = PxScale::from(config.font.size_title);
     let subtitle_scale = PxScale::from(config.font.size_subtitle);
@@ -57,7 +62,7 @@ pub fn create_layout(config: &AppConfig, name: &str, number: &str) -> RgbImage {
         title_x,
         title_y,
         Alignment::Center,
-    );
+    )?;
     process_text(
         text_subtitle_left,
         &variables,
@@ -68,7 +73,7 @@ pub fn create_layout(config: &AppConfig, name: &str, number: &str) -> RgbImage {
         subtitle_left_x,
         subtitle_y,
         Alignment::Left,
-    );
+    )?;
     process_text(
         &text_subtitle_right,
         &variables,
@@ -79,12 +84,17 @@ pub fn create_layout(config: &AppConfig, name: &str, number: &str) -> RgbImage {
         subtitle_right_x,
         subtitle_y,
         Alignment::Right,
-    );
-    layout
+    )?;
+    Ok(layout)
 }
 
-pub fn add_map_image(layout: &mut RgbImage, map_image_path: &str, margin: u32, map_crop: MapCrop) {
-    let map_image = image::open(map_image_path).expect("Error opening map image");
+pub fn add_map_image(
+    layout: &mut RgbImage,
+    map_image_path: &str,
+    margin: u32,
+    map_crop: MapCrop,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let map_image = image::open(map_image_path)?;
     let map_image = map_image.to_rgb8();
 
     let (width, height) = map_image.dimensions();
@@ -125,4 +135,6 @@ pub fn add_map_image(layout: &mut RgbImage, map_image_path: &str, margin: u32, m
     );
 
     image::imageops::overlay(layout, &resized_map, overlay_x, overlay_y);
+
+    Ok(())
 }

@@ -1,3 +1,4 @@
+use crossterm::style::{Color, Stylize};
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
@@ -57,10 +58,22 @@ impl AppConfig {
         settings.try_deserialize()
     }
 
-    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
+    fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
         let toml_str = toml::to_string(self)?;
         std::fs::write("config.toml", toml_str)?;
         Ok(())
+    }
+
+    // Save the current configuration to a file
+    pub fn save_config(&self) {
+        if self.save().is_ok() {
+            println!(
+                "\r{}",
+                "Configuration saved successfully.".with(Color::Green)
+            );
+        } else {
+            println!("\r{}", "Failed to save configuration.".with(Color::Red));
+        }
     }
 
     pub fn default() -> Self {
