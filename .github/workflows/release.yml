@@ -35,14 +35,15 @@ jobs:
         run: |
           mkdir -p artifacts
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            mkdir -p app
-            cp target/${{ matrix.target }}/release/buggy.exe app/
-            cp -r fonts app/
+            mkdir -p temp
+            cp target/${{ matrix.target }}/release/buggy.exe temp/
+            mv fonts temp/
             
-            zip -r artifacts/territory-app-windows.zip -j app/*
+            # Create zip with the desired structure
+            zip -r artifacts/territory-app-windows.zip -j temp/*
             
             # Clean up temporary directory
-            rm -rf app
+            rm -rf temp
           else
             tar -czf artifacts/buggy-linux.tar.gz -C target/${{ matrix.target }}/release buggy
           fi
