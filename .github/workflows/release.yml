@@ -35,7 +35,7 @@ jobs:
         run: |
           mkdir -p artifacts
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
-            zip artifacts/territory-app-windows.zip target/${{ matrix.target }}/release/buggy.exe
+            zip -r artifacts/territory-app-windows.zip target/${{ matrix.target }}/release/buggy.exe fonts
           else
             tar -czf artifacts/buggy-linux.tar.gz -C target/${{ matrix.target }}/release buggy
           fi
@@ -67,7 +67,7 @@ jobs:
           body: |
             This release includes:
             - Linux binary: buggy-linux.tar.gz
-            - Windows binary: buggy-windows.zip
+            - Windows binary: territory-app-windows.zip
           artifacts: |
             artifacts/x86_64-unknown-linux-gnu/buggy-linux.tar.gz
             artifacts/x86_64-pc-windows-gnu/territory-app-windows.zip
