@@ -36,8 +36,9 @@ jobs:
           mkdir -p artifacts
           if [[ "${{ matrix.target }}" == *"windows"* ]]; then
             mkdir -p temp
+            mkdir -p temp/fonts
             cp target/${{ matrix.target }}/release/buggy.exe temp/
-            mv fonts temp/
+            cp -r fonts temp/fonts
             
             # Create zip with the desired structure
             zip -r artifacts/territory-app-windows.zip -j temp/*
